@@ -4,6 +4,8 @@ import string
 from google.cloud import pubsub_v1
 import json
 import os
+import sys
+import time
 
 
 def generate_random_data() -> dict:
@@ -35,7 +37,20 @@ def pushing_message(project_id: str, topic_id: str, message: str):
 
 
 def main():
-    message = json.dumps(generate_random_data())
     project_id = os.environ["GOOGLE_PROJECT"]
     input_topic = os.environ["INPUT_TOPIC"]
-    pushing_message(project_id, input_topic, message)
+    seed = 45  # seed value
+    message_delay = 2  # time diff between two messages
+    values = int(sys.argv[1])
+    count = 0
+    random.seed(seed)
+
+    while count < values:
+        message = json.dumps(generate_random_data())
+        pushing_message(project_id, input_topic, message)
+        time.sleep(message_delay)
+        count += 1
+
+
+if __name__ == "__main__":
+    main()

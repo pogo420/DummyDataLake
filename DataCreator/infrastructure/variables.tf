@@ -36,3 +36,11 @@ variable "data_creator_topic" {
     default = "input_topic"
 
 }
+
+variable "data_creator_subscription" {
+
+    type = string
+    description = "Name of data_creator_subscription"
+    default = "sensor_subscription"
+
+}
