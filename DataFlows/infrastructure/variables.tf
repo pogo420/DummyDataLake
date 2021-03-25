@@ -36,3 +36,19 @@ variable "dataflow_bucket" {
     default = "ddl-dataflows"
 
 }
+
+variable "dataflow_dataset" {
+
+    type = string
+    description = "Name of dataflow_bucket"
+    default = "df_dataset"
+
+}
+
+variable "sensor_data_table" {
+
+    type = string
+    description = "Name of dataflow_bucket"
+    default = "sensor-data"
+
+}
