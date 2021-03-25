@@ -7,9 +7,10 @@ import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.options.ValueProvider;
 
+
 public class TestTemplate {
 
-    private interface Options extends PipelineOptions {
+    public interface Options extends PipelineOptions {
         // interface for defining options
         @Description("input file path")
         ValueProvider<String> getInputFile();
