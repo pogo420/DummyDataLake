@@ -26,7 +26,7 @@ public class TestTemplate {
                             .fromArgs(args)  // reads arguments --option=value
                             .withValidation() // validation of values are done
                             .as(Options.class);
-        
+
         run(options);
     }
 
@@ -34,7 +34,7 @@ public class TestTemplate {
         Pipeline pipeline = Pipeline.create(options);
         pipeline
                 .apply("Reading files", TextIO.read().from(options.getInputFile()))
-                .apply("Reading files", TextIO.write().to(options.getOutputFile()));
+                .apply("Writing files", TextIO.write().to(options.getOutputFile()));
 
         pipeline.run();
     }

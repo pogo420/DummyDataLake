@@ -25,4 +25,5 @@ test {
     useJUnitPlatform()
 }
 
-mainClassName = 'templates.TestTemplate'
+//mainClassName = 'templates.TestTemplate'
+mainClassName = 'templates.PubSubToAny'
