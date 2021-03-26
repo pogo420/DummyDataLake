@@ -1,0 +1,4 @@
+gcloud dataflow jobs run job_name
+--gcs-location <template_location>
+--region <region>
+--parameters inputFile=<file_name>,outputFile=<file_name>
