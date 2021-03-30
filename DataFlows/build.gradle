@@ -26,4 +26,4 @@ test {
 }
 
 //mainClassName = 'templates.TestTemplate'
-mainClassName = 'templates.PubSubToAny'
+mainClassName = 'templates.PubSubToFile'
