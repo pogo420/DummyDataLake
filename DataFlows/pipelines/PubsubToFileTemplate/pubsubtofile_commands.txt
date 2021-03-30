@@ -1,0 +1,4 @@
+gcloud dataflow jobs run <job-name>
+--gcs-location <template_location>
+--region  <region>
+--parameters inputSubscription=<subscription_name>,outputFile=<file_name>
