@@ -7,13 +7,14 @@ import org.apache.beam.sdk.transforms.PTransform;
 import org.apache.beam.sdk.transforms.windowing.FixedWindows;
 import org.apache.beam.sdk.transforms.windowing.Window;
 import org.apache.beam.sdk.values.PCollection;
+import org.apache.beam.sdk.values.PDone;
 import org.apache.beam.sdk.values.TypeDescriptors;
 import org.joda.time.Duration;
 import templates.Options;
 
 import java.nio.charset.StandardCharsets;
 
-public class UniversalSync extends PTransform<PCollection<PubsubMessage>,PCollection<Void>> {
+public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone> {
 
     private String outputFile;
 
@@ -22,7 +23,7 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>,PCollec
     }
 
     @Override
-    public PCollection<Void> expand(PCollection<PubsubMessage> input) {
+    public PDone expand(PCollection<PubsubMessage> input) {
 
         if (!this.outputFile.isEmpty()){
             input
@@ -39,6 +40,6 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>,PCollec
                             .withWindowedWrites()
                             .withNumShards(1));
         }
-        return null;
+        return PDone.in(input.getPipeline());
     }
 }
