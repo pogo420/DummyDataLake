@@ -17,29 +17,39 @@ import java.nio.charset.StandardCharsets;
 public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone> {
 
     private String outputFile;
+    private String outputBqTable;
 
-    public UniversalSync(Options options){
+    public UniversalSync(Options options) {
         this.outputFile = options.getOutputFile();
+        this.outputBqTable = options.getBqTable();
     }
 
     @Override
     public PDone expand(PCollection<PubsubMessage> input) {
 
-        if (!this.outputFile.isEmpty()){
-            input
-                    .apply("Converting PubSub messages to String", MapElements
-                            .into(TypeDescriptors.strings())
-                            .via(message -> new String(message.getPayload(), StandardCharsets.UTF_8)))
+        PCollection<String> windowedData = input
+                .apply("Converting PubSub messages to String", MapElements
+                        .into(TypeDescriptors.strings())
+                        .via(message -> new String(message.getPayload(), StandardCharsets.UTF_8)))
 
-                    .apply("Windowing", Window
-                            .into(FixedWindows.of(Duration.standardSeconds(200))))
+                .apply("Windowing", Window
+                        .into(FixedWindows.of(Duration.standardSeconds(200))));
 
+        if (!this.outputFile.isEmpty()) {
+            windowedData
                     .apply("Writing to file", TextIO
                             .write()
                             .to(this.outputFile)
                             .withWindowedWrites()
                             .withNumShards(1));
         }
+
+        if (!this.outputBqTable.isEmpty()){
+            windowedData
+                    .apply("Writing to BQ table", )
+        }
         return PDone.in(input.getPipeline());
     }
+
+
 }

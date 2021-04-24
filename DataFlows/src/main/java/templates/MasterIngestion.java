@@ -20,7 +20,7 @@ public class MasterIngestion {
         run(options);
     }
 
-    private static PipelineResult run(Options options){
+    private static PipelineResult run(Options options) {
         Pipeline pipeline = Pipeline.create(options);
 
         // Reading from pub sub IO
