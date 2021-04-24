@@ -46,7 +46,7 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone>
 
         if (!this.outputBqTable.isEmpty()){
             windowedData
-                    .apply("Writing to BQ table", )
+                    .apply("Writing to BQ table", null);
         }
         return PDone.in(input.getPipeline());
     }
