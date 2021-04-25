@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MasterIngestion" type="Application" factoryName="Application" nameIsGenerated="true">
+    <envs>
+      <env name="GOOGLE_APPLICATION_CREDENTIALS" value="$PROJECT_DIR$/../../gcp-keys/dummydatalake-master.json" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="templates.MasterIngestion" />
+    <module name="DataFlows.main" />
+    <option name="PROGRAM_PARAMETERS" value="--runner=DataflowRunner --project=dummydatalake --region=us-central1 --inputSubscription=projects/dummydatalake/subscriptions/sensor_subscription --outputFile=gs://ddl-dataflows/out_new" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="templates.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
