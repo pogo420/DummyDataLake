@@ -1,6 +1,9 @@
 package transforms;
 
+import coders.Coders;
 import com.google.api.services.bigquery.model.TableRow;
+import messages.IngestionMessage;
+import messages.Json;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubMessage;
@@ -10,6 +13,7 @@ import org.apache.beam.sdk.transforms.windowing.FixedWindows;
 import org.apache.beam.sdk.transforms.windowing.Window;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.PDone;
+import org.apache.beam.sdk.values.TypeDescriptor;
 import org.apache.beam.sdk.values.TypeDescriptors;
 import org.joda.time.Duration;
 import templates.Options;
@@ -47,10 +51,25 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone>
 
         }
 
+        PCollection<IngestionMessage> ingestionMessage = input
+                .apply("Converting to Ingestion Message", MapElements
+                        .into(TypeDescriptor.of(IngestionMessage.class))
+                        .via(message -> IngestionMessage.messageDeSerial(
+                                new String(message.getPayload(), StandardCharsets.UTF_8)
+                        )));
+
+        PCollection<IngestionMessage> ingestionMessageCoded = ingestionMessage
+                .setCoder(Coders.ingestionMessage());
+
         if (!this.outputBqTable.isEmpty()) {
 
-            input
-                    .apply("Writing to BQ", null);
+            ingestionMessageCoded.apply("Write to BQ", BigQueryIO
+                    .<IngestionMessage>write()
+                    .withFormatFunction(
+                            message -> Json.getMapper().convertValue(message.getPayload(), TableRow.class)
+                    )
+                    .to(this.outputBqTable)
+            );
 
         }
         return PDone.in(input.getPipeline());
