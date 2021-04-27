@@ -1,13 +1,16 @@
 package coders;
 
+import com.sun.xml.internal.ws.util.StreamUtils;
 import org.apache.beam.sdk.coders.CoderException;
 import org.apache.beam.sdk.coders.CustomCoder;
 import org.apache.beam.sdk.values.TypeDescriptor;
+import org.apache.commons.compress.utils.IOUtils;
 import utils.functions.SerialFunction;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class CustomCode<T> extends CustomCoder<T> {
 
@@ -56,12 +59,13 @@ public class CustomCode<T> extends CustomCoder<T> {
 
     @Override
     public void encode(T value, OutputStream outStream) throws CoderException, IOException {
-        encoder.apply(value);
+        outStream.write(encoder.apply(value).getBytes()); // serialization will be done by the function.
     }
 
     @Override
     public T decode(InputStream inStream) throws CoderException, IOException {
-        return decoder.apply(inStream.toString());
+        String serializedMessage = new String(IOUtils.toByteArray(inStream), StandardCharsets.UTF_8);
+        return decoder.apply(serializedMessage); // deserialization will be done by the function.
     }
 
 }
