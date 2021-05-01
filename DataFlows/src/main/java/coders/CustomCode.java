@@ -1,6 +1,5 @@
 package coders;
 
-import com.sun.xml.internal.ws.util.StreamUtils;
 import org.apache.beam.sdk.coders.CoderException;
 import org.apache.beam.sdk.coders.CustomCoder;
 import org.apache.beam.sdk.values.TypeDescriptor;

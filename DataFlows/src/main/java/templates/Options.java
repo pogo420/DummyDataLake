@@ -15,8 +15,8 @@ public interface Options extends PipelineOptions {
     void setOutputTopic(String value);
 
     @Description("output bq table name")
-    String getBqTable();
-    void setBqTable(String value);
+    String getOutputBqTable();
+    void setOutputBqTable(String value);
 
     @Description("input subscription")
     String getInputSubscription();

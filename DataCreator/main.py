@@ -11,13 +11,15 @@ import time
 def generate_random_data() -> dict:
     """Function to generate random data"""
     data = {
-        "userId": uuid.uuid4().__str__(),
-        "sensorValue": random.random(),
-        "sensorId": "".join(random.choices(string.ascii_lowercase + string.digits, k=5))
-                    + "-"
-                    + "".join(random.choices(string.ascii_lowercase + string.digits, k=10))
-                    + "-"
-                    + "".join(random.choices(string.ascii_lowercase + string.digits, k=10))
+        "_pl": {
+            "userId": uuid.uuid4().__str__(),
+            "sensorValue": random.random(),
+            "sensorId": "".join(random.choices(string.ascii_lowercase + string.digits, k=5))
+                        + "-"
+                        + "".join(random.choices(string.ascii_lowercase + string.digits, k=10))
+                        + "-"
+                        + "".join(random.choices(string.ascii_lowercase + string.digits, k=10))
+        }
     }
     return data
 

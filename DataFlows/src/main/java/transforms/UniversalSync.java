@@ -20,6 +20,9 @@ import templates.Options;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.Write.CreateDisposition.CREATE_NEVER;
+import static org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.Write.WriteDisposition.WRITE_APPEND;
+
 public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone> {
 
     private String outputFile;
@@ -27,7 +30,7 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone>
 
     public UniversalSync(Options options) {
         this.outputFile = options.getOutputFile();
-        this.outputBqTable = options.getBqTable();
+        this.outputBqTable = options.getOutputBqTable();
     }
 
     @Override
@@ -50,28 +53,30 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone>
                             .withNumShards(1));
 
         }
-
-        PCollection<IngestionMessage> ingestionMessage = input
-                .apply("Converting to Ingestion Message", MapElements
-                        .into(TypeDescriptor.of(IngestionMessage.class))
-                        .via(message -> IngestionMessage.messageDeSerial(
-                                new String(message.getPayload(), StandardCharsets.UTF_8)
-                        )));
-
-        PCollection<IngestionMessage> ingestionMessageCoded = ingestionMessage
-                .setCoder(Coders.ingestionMessage());
-
-        if (!this.outputBqTable.isEmpty()) {
-
-            ingestionMessageCoded.apply("Write to BQ", BigQueryIO
-                    .<IngestionMessage>write()
-                    .withFormatFunction(
-                            message -> Json.getMapper().convertValue(message.getPayload(), TableRow.class)
-                    )
-                    .to(this.outputBqTable)
-            );
-
-        }
+// Not supported in free trial
+//        PCollection<IngestionMessage> ingestionMessage = input
+//                .apply("Converting to Ingestion Message", MapElements
+//                        .into(TypeDescriptor.of(IngestionMessage.class))
+//                        .via(message -> IngestionMessage.messageDeSerial(
+//                                new String(message.getPayload(), StandardCharsets.UTF_8)
+//                        )));
+//
+//        PCollection<IngestionMessage> ingestionMessageCoded = ingestionMessage
+//                .setCoder(Coders.ingestionMessage());
+//
+//        if (!this.outputBqTable.isEmpty()) {
+//
+//            ingestionMessageCoded.apply("Write to BQ", BigQueryIO
+//                    .<IngestionMessage>write()
+//                    .withFormatFunction(
+//                            message -> Json.getMapper().convertValue(message.getPayload(), TableRow.class)
+//                    )
+//                    .to(this.outputBqTable)
+//                    .withCreateDisposition(CREATE_NEVER)
+//                    .withWriteDisposition(WRITE_APPEND)
+//            );
+//
+//        }
         return PDone.in(input.getPipeline());
     }
 
