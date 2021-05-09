@@ -36,6 +36,16 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone>
     @Override
     public PDone expand(PCollection<PubsubMessage> input) {
 
+        PCollection<IngestionMessage> ingestionMessage = input
+                .apply("Converting to Ingestion Message", MapElements
+                        .into(TypeDescriptor.of(IngestionMessage.class))
+                        .via(message -> IngestionMessage.messageDeSerial(
+                                new String(message.getPayload(), StandardCharsets.UTF_8)
+                        )));
+
+        PCollection<IngestionMessage> ingestionMessageCoded = ingestionMessage
+                .setCoder(Coders.ingestionMessage());
+
         if (!this.outputFile.isEmpty()) {
 
             input
@@ -54,29 +64,19 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone>
 
         }
 // Not supported in free trial
-//        PCollection<IngestionMessage> ingestionMessage = input
-//                .apply("Converting to Ingestion Message", MapElements
-//                        .into(TypeDescriptor.of(IngestionMessage.class))
-//                        .via(message -> IngestionMessage.messageDeSerial(
-//                                new String(message.getPayload(), StandardCharsets.UTF_8)
-//                        )));
-//
-//        PCollection<IngestionMessage> ingestionMessageCoded = ingestionMessage
-//                .setCoder(Coders.ingestionMessage());
-//
-//        if (!this.outputBqTable.isEmpty()) {
-//
-//            ingestionMessageCoded.apply("Write to BQ", BigQueryIO
-//                    .<IngestionMessage>write()
-//                    .withFormatFunction(
-//                            message -> Json.getMapper().convertValue(message.getPayload(), TableRow.class)
-//                    )
-//                    .to(this.outputBqTable)
-//                    .withCreateDisposition(CREATE_NEVER)
-//                    .withWriteDisposition(WRITE_APPEND)
-//            );
-//
-//        }
+        if (!this.outputBqTable.isEmpty()) {
+
+            ingestionMessageCoded.apply("Write to BQ", BigQueryIO
+                    .<IngestionMessage>write()
+                    .withFormatFunction(
+                            message -> Json.getMapper().convertValue(message.getPayload(), TableRow.class)
+                    )
+                    .to(this.outputBqTable)
+                    .withCreateDisposition(CREATE_NEVER)
+                    .withWriteDisposition(WRITE_APPEND)
+            );
+
+        }
         return PDone.in(input.getPipeline());
     }
 
