@@ -33,7 +33,12 @@ public class Validations extends PTransform<PCollection<IngestionMessage>, PColl
         input.apply("Adding Processing Time", ParDo.of(addingProcessingTime()));
         return null;
     }
-
+    // TODO sample schema in json file
+    // TODO create class: Schema Json to Object
+    // TODO validation mapElements: each row from Schema and check if it present in IngestionMessage
+    // TODO Wrapper class on IngestionMessage to get message and error message.
+    // TODO create tag tuple: SUCCESS and FAIL
+    // TODO Create tuple output(tuple tag, message) and (tuple tag, message, error message)
 
     private DoFn<IngestionMessage, IngestionMessage> addingProcessingTime() {
         return new DoFn<IngestionMessage, IngestionMessage>() {

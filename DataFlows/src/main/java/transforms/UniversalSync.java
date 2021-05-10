@@ -46,6 +46,10 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone>
         PCollection<IngestionMessage> ingestionMessageCoded = ingestionMessage
                 .setCoder(Coders.ingestionMessage());
 
+        // TODO add the validation trasform
+        // TODO Success > move ahead and failure > failure_file_name
+        // TODO Test
+        // TODO APi dev for dataflow calls and plan other TODOs
         if (!this.outputFile.isEmpty()) {
 
             input
