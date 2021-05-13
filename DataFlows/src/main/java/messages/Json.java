@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
+import java.io.IOException;
+
 public class Json {
 
     /** Class for managing json processing */
@@ -37,6 +40,16 @@ public class Json {
             return getMapper().readValue(string, class_);
         }
         catch (JsonProcessingException e){
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static JsonNode deserializeFromFile(String file_name) {
+        /** static method for deserialization: File to Object */
+        try {
+            return getMapper().readTree(new File(file_name));
+        } catch (IOException e){
             throw new RuntimeException(e);
         }
 

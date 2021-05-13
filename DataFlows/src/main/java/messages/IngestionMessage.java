@@ -3,6 +3,7 @@ package messages;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import schema_loader.SchemaLoader;
 
 public class IngestionMessage {
     /** Class for Managing Ingestion Message */
@@ -36,6 +37,10 @@ public class IngestionMessage {
     public static IngestionMessage setPayload(ObjectNode node) {
         // creating new payload
         return new IngestionMessage(node);
+    }
+
+    public static void validator(IngestionMessage obj, SchemaLoader schemaLoader){
+
     }
 
 }
