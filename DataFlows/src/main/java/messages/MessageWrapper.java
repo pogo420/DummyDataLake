@@ -1,6 +1,8 @@
 package messages;
 
-public class MessageWrapper<T> {
+import java.io.Serializable;
+
+public class MessageWrapper<T> implements Serializable {
 
     private final T messageObj;
     private boolean isFailure;

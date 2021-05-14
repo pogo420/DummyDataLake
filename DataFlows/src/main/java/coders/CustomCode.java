@@ -2,6 +2,8 @@ package coders;
 
 import org.apache.beam.sdk.coders.CoderException;
 import org.apache.beam.sdk.coders.CustomCoder;
+import org.apache.beam.sdk.coders.NullableCoder;
+import org.apache.beam.sdk.coders.StringUtf8Coder;
 import org.apache.beam.sdk.values.TypeDescriptor;
 import org.apache.commons.compress.utils.IOUtils;
 import utils.functions.SerialFunction;
@@ -9,9 +11,10 @@ import utils.functions.SerialFunction;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 
-public class CustomCode<T> extends CustomCoder<T> {
+public class CustomCode<T> extends CustomCoder<T> implements Serializable {
 
     public static class Builder<T> {
 
@@ -43,6 +46,7 @@ public class CustomCode<T> extends CustomCoder<T> {
     private TypeDescriptor<T> type;
     private SerialFunction<T, String> encoder;
     private SerialFunction<String, T> decoder;
+    private static final NullableCoder<String> UTF8_CODER = NullableCoder.of(StringUtf8Coder.of());
 
     private CustomCode(TypeDescriptor<T> type,
                        SerialFunction<T, String> encoder,
@@ -58,13 +62,15 @@ public class CustomCode<T> extends CustomCoder<T> {
 
     @Override
     public void encode(T value, OutputStream outStream) throws CoderException, IOException {
-        outStream.write(encoder.apply(value).getBytes()); // serialization will be done by the function.
+//        outStream.write(encoder.apply(value).getBytes()); // serialization will be done by the function.
+        UTF8_CODER.encode(encoder.apply(value), outStream);
     }
 
     @Override
     public T decode(InputStream inStream) throws CoderException, IOException {
-        String serializedMessage = new String(IOUtils.toByteArray(inStream), StandardCharsets.UTF_8);
-        return decoder.apply(serializedMessage); // deserialization will be done by the function.
+//        String serializedMessage = new String(IOUtils.toByteArray(inStream), StandardCharsets.UTF_8);
+//        return decoder.apply(serializedMessage); // deserialization will be done by the function.
+        return decoder.apply(UTF8_CODER.decode(inStream));
     }
 
 }
