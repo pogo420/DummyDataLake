@@ -49,7 +49,7 @@ public class IngestionMessage implements Serializable {
         IngestionMessage ingestionMessage = ingestionMessageWrapped.getMessageObj();
 
         while(col < schemaLoader.getNumColumns()) {
-
+            // TODO column type check
             String columnName = schemaLoader.getColumnNameByIndex(col);
             String columnDataType = schemaLoader.getSchemaColumnDataTypeKey(col);
 

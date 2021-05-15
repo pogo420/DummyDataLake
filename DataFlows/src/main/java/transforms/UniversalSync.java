@@ -16,19 +16,24 @@ import org.joda.time.Duration;
 import templates.Options;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.Write.CreateDisposition.CREATE_NEVER;
 import static org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.Write.WriteDisposition.WRITE_APPEND;
+import static transforms.Validations.FAILURE;
 import static transforms.Validations.SUCCESS;
 
 public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone> {
+    /** Class for Composite Transformation: Universal sink*/
 
     private String outputFile;
     private String outputBqTable;
+    private PCollectionView<List<String>> schema;
 
-    public UniversalSync(Options options) {
+    public UniversalSync(Options options, PCollectionView<List<String>> schema ) {
         this.outputFile = options.getOutputFile();
         this.outputBqTable = options.getOutputBqTable();
+        this.schema = schema;
     }
 
     @Override
@@ -45,14 +50,12 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone>
                 .setCoder(Coders.ingestionMessage());
 
         PCollectionTuple validatedMessage = ingestionMessageCoded
-                .apply("Validate Schema", Validations.with("/home/lenovo/Projects/DummyDataLake/" +
-                        "DataFlows/infrastructure/bq-schemas/sensor-data.json"));
+                .apply("Validate Schema", Validations.with(this.schema));
 
-        // TODO Success > move ahead and failure > failure_file_name
-        // TODO Test
         // TODO APi dev for dataflow calls and plan other TODOs
         if (!this.outputFile.isEmpty()) {
 
+            // Handing success
             validatedMessage.get(SUCCESS)
                     .apply("Converting PubSub messages to String", MapElements
                             .into(TypeDescriptors.strings())
@@ -63,7 +66,21 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone>
 
                     .apply("Writing to file", TextIO
                             .write()
-                            .to("success_"+ this.outputFile)
+                            .to(this.outputFile + "success_")
+                            .withWindowedWrites()
+                            .withNumShards(1));
+
+            // Handing failure
+            validatedMessage.get(FAILURE)
+                    .apply("Error Data Processing", MapElements
+                            .into(TypeDescriptors.strings())
+                            .via(message-> message._1.messageSerial()))
+                    .apply("Windowing", Window
+                            .into(FixedWindows.of(Duration.standardSeconds(200))))
+
+                    .apply("Writing to file", TextIO
+                            .write()
+                            .to(this.outputFile + "failure_")
                             .withWindowedWrites()
                             .withNumShards(1));
         }

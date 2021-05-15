@@ -1,6 +1,5 @@
 package schema_loader;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import messages.Json;
 
@@ -13,7 +12,8 @@ public class SchemaLoader {
     private final ArrayNode schemaObject;
 
     private SchemaLoader(String filePath) {
-        this.schemaObject = (ArrayNode) Json.deserializeFromFile(filePath);
+//        this.schemaObject = (ArrayNode) Json.deserializeFromFile(filePath);
+        this.schemaObject = (ArrayNode) Json.deserializeFromString(filePath);
     }
 
     public static SchemaLoader of(String filePath) {

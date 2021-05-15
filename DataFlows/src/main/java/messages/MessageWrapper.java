@@ -3,6 +3,7 @@ package messages;
 import java.io.Serializable;
 
 public class MessageWrapper<T> implements Serializable {
+    /** Class to Wrap ingestion message, stores metadata/ processing status of ingestion message */
 
     private final T messageObj;
     private boolean isFailure;

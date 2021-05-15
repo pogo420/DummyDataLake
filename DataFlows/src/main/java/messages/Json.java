@@ -55,4 +55,14 @@ public class Json {
 
     }
 
+    public static JsonNode deserializeFromString(String json_string) {
+        /** static method for deserialization: File to Object */
+        try {
+            return getMapper().readTree(json_string);
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
+
+    }
+
 }
