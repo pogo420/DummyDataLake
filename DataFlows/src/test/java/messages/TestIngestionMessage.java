@@ -3,6 +3,7 @@ package messages;
 import io.vavr.Tuple2;
 import org.junit.jupiter.api.Test;
 import schema_loader.SchemaLoader;
+import schema_loader.SchemaLoaderGcs;
 
 public class TestIngestionMessage {
 
@@ -18,8 +19,8 @@ public class TestIngestionMessage {
                 "    }";
 
         IngestionMessage ingestionMessage = Json.deserialize(message, IngestionMessage.class);
-        Tuple2<IngestionMessage, MessageWrapper<IngestionMessage>> validatorResponse = IngestionMessage.validator(MessageWrapper.wrap(ingestionMessage), SchemaLoader.of("/home/lenovo/Projects/DummyDataLake/" +
-                "DataFlows/infrastructure/bq-schemas/sensor-data.json"));
+        Tuple2<IngestionMessage, MessageWrapper<IngestionMessage>> validatorResponse = IngestionMessage.validator(MessageWrapper.wrap(ingestionMessage), SchemaLoader.of(SchemaLoaderGcs.loadSchema("/home/lenovo/Projects/DummyDataLake/" +
+                "DataFlows/infrastructure/bq-schemas/sensor-data.json")));
 
         assert validatorResponse._2.getFailureFlag();
     }
@@ -36,8 +37,8 @@ public class TestIngestionMessage {
                 "    }";
 
         IngestionMessage ingestionMessage = Json.deserialize(message, IngestionMessage.class);
-        Tuple2<IngestionMessage, MessageWrapper<IngestionMessage>> validatorResponse = IngestionMessage.validator(MessageWrapper.wrap(ingestionMessage), SchemaLoader.of("/home/lenovo/Projects/DummyDataLake/" +
-                "DataFlows/infrastructure/bq-schemas/sensor-data.json"));
+        Tuple2<IngestionMessage, MessageWrapper<IngestionMessage>> validatorResponse = IngestionMessage.validator(MessageWrapper.wrap(ingestionMessage), SchemaLoader.of(SchemaLoaderGcs.loadSchema("/home/lenovo/Projects/DummyDataLake/" +
+                "DataFlows/infrastructure/bq-schemas/sensor-data.json")));
 
         assert !validatorResponse._2.getFailureFlag();
     }

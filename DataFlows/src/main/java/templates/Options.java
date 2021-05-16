@@ -7,8 +7,8 @@ import org.apache.beam.sdk.options.PipelineOptions;
 public interface Options extends PipelineOptions {
 
     @Description("schema file path")
-    String getSchemaFile();
-    void setSchemaFile(String value);
+    String getSchemaFilePath();
+    void setSchemaFilePath(String value);
 
     @Description("output file path")
     String getOutputFile();

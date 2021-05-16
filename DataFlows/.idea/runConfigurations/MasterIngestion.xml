@@ -5,7 +5,7 @@
     </envs>
     <option name="MAIN_CLASS_NAME" value="templates.MasterIngestion" />
     <module name="DataFlows.main" />
-    <option name="PROGRAM_PARAMETERS" value="--runner=DataflowRunner --project=dummydatalake --region=us-central1 --inputSubscription=projects/dummydatalake/subscriptions/sensor_subscription --outputBqTable=dummydatalake:df_dataset.sensor-data --outputFile=gs://ddl-dataflows/outputs/ --schemaFile=gs://ddl-dataflows/sensor-data.json" />
+    <option name="PROGRAM_PARAMETERS" value="--runner=DataflowRunner --project=dummydatalake --region=us-central1 --inputSubscription=projects/dummydatalake/subscriptions/sensor_subscription --outputBqTable=dummydatalake:df_dataset.sensor-data --outputFile=gs://ddl-dataflows/outputs/ --schemaFilePath=gs://ddl-dataflows/sensor-data.json" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="templates.*" />

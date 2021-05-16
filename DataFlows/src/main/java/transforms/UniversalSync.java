@@ -3,7 +3,6 @@ package transforms;
 import coders.Coders;
 import com.google.api.services.bigquery.model.TableRow;
 import messages.IngestionMessage;
-import messages.Json;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubMessage;
@@ -14,10 +13,7 @@ import org.apache.beam.sdk.transforms.windowing.Window;
 import org.apache.beam.sdk.values.*;
 import org.joda.time.Duration;
 import templates.Options;
-
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 import static org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.Write.CreateDisposition.CREATE_NEVER;
 import static org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.Write.WriteDisposition.WRITE_APPEND;
 import static transforms.Validations.FAILURE;
@@ -28,12 +24,12 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone>
 
     private String outputFile;
     private String outputBqTable;
-    private PCollectionView<List<String>> schema;
+    private String schemaPath;
 
-    public UniversalSync(Options options, PCollectionView<List<String>> schema ) {
+    public UniversalSync(Options options) {
         this.outputFile = options.getOutputFile();
         this.outputBqTable = options.getOutputBqTable();
-        this.schema = schema;
+        this.schemaPath = options.getSchemaFilePath();
     }
 
     @Override
@@ -50,7 +46,7 @@ public class UniversalSync extends PTransform<PCollection<PubsubMessage>, PDone>
                 .setCoder(Coders.ingestionMessage());
 
         PCollectionTuple validatedMessage = ingestionMessageCoded
-                .apply("Validate Schema", Validations.with(this.schema));
+                .apply("Validate Schema", Validations.with(this.schemaPath));
 
         // TODO APi dev for dataflow calls and plan other TODOs
         if (!this.outputFile.isEmpty()) {
